@@ -1,5 +1,6 @@
 import telebot
 from telebot import types
+import main_SQL
 bot = telebot.TeleBot("6701177381:AAHOyJu-MZ2j8djqTT5rZlqiGIlJMOt0mA0")
 
 
@@ -34,6 +35,7 @@ def profile(message):
         pfdoo = int(message.text)
         print(pfdoo)
         bot.send_message(message.chat.id, "Ты успешно зарегистрировался! Вот твой профиль:")
+        main_SQL.user_database(id, namesur, pfdoo)
         bot.register_next_step_handler(message, anketa)
 
     except:

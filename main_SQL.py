@@ -54,8 +54,8 @@ def update_data(name, id, column, data):
     cur.execute(sql_query , (data, id,))
     con.commit()
     con.close()
-def select_data(name, id):
-    con = sqlite3.connect(f'{name}.sqlite')
+def select_data(id):
+    con = sqlite3.connect(f'user.sqlite')
     cur = con.cursor()
     data = cur.execute(f'''
     SELECT *
@@ -66,12 +66,12 @@ def select_data(name, id):
     con.commit()
     con.close()
     return data
-def datafr(name):
+def datafr(name, table):
     con = sqlite3.connect(f'{name}.sqlite')
     cur = con.cursor()
     data = cur.execute(f'''
     SELECT *
-    FROM users
+    FROM {table}
     ''')
     data = data.fetchall()
     con.commit()
@@ -85,7 +85,7 @@ def user_database(id, name_user, pfdo):
     insert_user(id,name_user, pfdo)
     return False
 def user_db(name, id):
-    data = datafr(name)
+    data = datafr(name, "users")
     for i in range(len(data)):
         if data[i][1] == id:
             return True

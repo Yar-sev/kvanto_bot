@@ -1,1 +1,1 @@
-from main_SQL import *
+print(type(len(str(1234))))
