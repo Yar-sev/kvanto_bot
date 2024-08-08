@@ -25,21 +25,25 @@ def subnet():
     return text
 def product_def(id):
     text = ""
-    data = datafr("store", "products")
-    if int(id) <= len(data):
-        for i in data:
-            if i[0] == int(id):
-                num = int(i[4])
-                len0 = len(str(num))
-                kvant = "Квантокоин"
-                if len0 > 1:
-                    len1 = len0 - 1
-                    symbol0 = str(num)[len1]
-                    kvant += okonchanie[int(symbol0)]
-                else:
-                    kvant += okonchanie[num]
-                text += f"{i[0]}. {i[1]}\n{i[2]}\n{i[4]} {kvant}"
-                return text
+    if id.isdigit():
+        data = datafr("store", "products")
+        if int(id) <= len(data):
+            for i in data:
+                if i[0] == int(id):
+                    num = int(i[4])
+                    len0 = len(str(num))
+                    kvant = "Квантокоин"
+                    if len0 > 1:
+                        len1 = len0 - 1
+                        symbol0 = str(num)[len1]
+                        kvant += okonchanie[int(symbol0)]
+                    else:
+                        kvant += okonchanie[num]
+                    text += f"{i[0]}. {i[1]}\n{i[2]}\n{i[4]} {kvant}"
+                    return text
+        else:
+            text = "нет такого товара"
+            return text
     else:
-        text = "нет такого товара"
+        text = "не правильный ввод"
         return text

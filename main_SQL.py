@@ -47,10 +47,10 @@ def insert_product(name, type, price, about):
     con.commit()
     con.close()
 
-def update_data(name, id, column, data):
+def update_data(name,table, id, column, data, line):
     con = sqlite3.connect(f'{name}.sqlite')
     cur = con.cursor()
-    sql_query = f"UPDATE users SET {column} = ? WHERE user_id = ?;"
+    sql_query = f"UPDATE {table} SET {column} = ? WHERE {line} = ?;"
     cur.execute(sql_query , (data, id,))
     con.commit()
     con.close()
@@ -78,7 +78,7 @@ def datafr(name, table):
     con.close()
     return data
 def user_database(id, name_user, pfdo):
-    data = datafr("user")
+    data = datafr("user", "users")
     for i in range(len(data)):
         if data[i][1] == id:
             return True
