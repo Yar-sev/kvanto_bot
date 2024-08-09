@@ -82,3 +82,12 @@ def user_list():
     for i in data:
         text += f"\n{i[0]}. {i[4]} {i[1]}, статус - {i[3]}, счёт - {i[2]}"
     return text
+def correction():
+    data = datafr("store", "products")
+    num = 0
+    for i in data:
+        num += 1
+        update_data("store", "products", i[1], "id", num, "article")
+def applic_shut(id):
+    update_data("applications", "applications", id, "done", "True", "id")
+    update_data("applications", "applications", id, "date_comple", datetime.date.today(), "id")

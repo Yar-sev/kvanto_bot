@@ -62,7 +62,8 @@ def message_handler(message):
             btn5 = types.KeyboardButton("список заявок")
             btn4 = types.KeyboardButton("добавить коины")
             btn3 = types.KeyboardButton("обратно")
-            markup.add(btn1, btn2, btn3, btn4, btn5)
+            btn6 = types.KeyboardButton("подтвереждение заявки")
+            markup.add(btn1, btn2, btn3, btn4, btn5, btn6)
             bot.send_message(message.chat.id, "панель администратора", reply_markup=markup)
         else:
             bot.send_message(message.chat.id, "У вас нет право доступа к панели")
@@ -76,6 +77,12 @@ def message_handler(message):
         if select_data(message.chat.id)[0][3] == "admin":
             bot.send_message(message.chat.id, "для удаления - /del\nдля добавления - /add")
             bot.register_next_step_handler(message, change_store)
+        else:
+            bot.send_message(message.chat.id, "У вас нет право доступа к панели")
+    elif message.text.lower() == "подтвереждение заявки":
+        if select_data(message.chat.id)[0][3] == "admin":
+            bot.send_message(message.chat.id, "впишите номер заявки для пожтвреждения")
+            bot.register_next_step_handler(message, update_applications0)
         else:
             bot.send_message(message.chat.id, "У вас нет право доступа к панели")
     elif message.text.lower() == "список пользователей":
@@ -216,6 +223,7 @@ def type_prod(message):
 def about_prod(message):
     global name, price, prod
     insert_product(name, prod, price, message.text)
+    correction()
     bot.send_message(message.chat.id, "добавленно")
 def del_prod(message):
     if message.text.isdigit():
@@ -226,4 +234,28 @@ def del_prod(message):
             bot.send_message(message.chat.id, "нет такого товара")
     else:
         bot.send_message(message.chat.id, "неправильный ввод")
+def update_applications0(message):
+    if message.text.isdigit():
+        print(1)
+        data = datafr("applications", "applications")[int(message.text)-1]
+        if data[5] == 'False':
+            global Numprod
+            Numprod = int(message.text)-1
+            text = f"{data[0]}. {data[2]}\n\n эту заявку? да/нет"
+            bot.send_message(message.chat.id, text)
+            bot.register_next_step_handler(message, update_applications1)
+        else:
+            print(2)
+            bot.send_message(message.chat.id, "неправильный ввод")
+            bot.register_next_step_handler(message, update_applications0)
+    else:
+        print(3)
+        bot.send_message(message.chat.id, "неправильный ввод")
+        bot.register_next_step_handler(message, update_applications0)
+def update_applications1(message):
+    if message.text.lower() == 'да':
+        print(Numprod)
+        applic_shut(Numprod+1)
+    else:
+        bot.register_next_step_handler(message, update_applications0)
 bot.infinity_polling()
