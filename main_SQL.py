@@ -32,6 +32,23 @@ def create_store():
     cur.execute(query)
     con.commit()
     con.close()
+def list_applic():
+    con = sqlite3.connect('applications.sqlite')
+    cur = con.cursor()
+
+    query = '''
+    CREATE TABLE IF NOT EXISTS applications (
+        id INTEGER PRIMARY KEY,
+        user_id INTEGER,
+        article TEXT,
+        appl_date TEXT,
+        date_comple TEXT,
+        done TEXT
+    ); 
+    '''
+    cur.execute(query)
+    con.commit()
+    con.close()
 def insert_user(id, name_user, pfdo):
     con = sqlite3.connect('user.sqlite')
     cur = con.cursor()
@@ -46,7 +63,13 @@ def insert_product(name, type, price, about):
     cur.execute(f'INSERT INTO products (article, about, type, price) VALUES ("{name}", "{about}", "{type}", {price});')
     con.commit()
     con.close()
+def insert_applic(id, article, date1):
+    con = sqlite3.connect('applications.sqlite')
+    cur = con.cursor()
 
+    cur.execute(f'INSERT INTO applications (user_id, article, appl_date, date_comple, done) VALUES ({id}, "{article}", "{date1}", "" , "False");')
+    con.commit()
+    con.close()
 def update_data(name,table, id, column, data, line):
     con = sqlite3.connect(f'{name}.sqlite')
     cur = con.cursor()
@@ -84,9 +107,20 @@ def user_database(id, name_user, pfdo):
             return True
     insert_user(id,name_user, pfdo)
     return False
-def user_db(name, id):
-    data = datafr(name, "users")
+def user_db(id):
+    data = datafr("user", "users")
     for i in range(len(data)):
         if data[i][1] == id:
             return True
     return False
+def delete_prod(id):
+    con = sqlite3.connect('store.sqlite')
+    cur = con.cursor()
+
+    query = f'''
+    DELETE FROM products
+    WHERE id = {id}
+    '''
+    cur.execute(query)
+    con.commit()
+    con.close()

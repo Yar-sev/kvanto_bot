@@ -1,4 +1,5 @@
 from main_SQL import *
+import datetime
 okonchanie = {0 : "ов",
               1 : "",
               2 : "а",
@@ -47,3 +48,37 @@ def product_def(id):
     else:
         text = "не правильный ввод"
         return text
+def application(user, id):
+    data = datafr("store", "products")
+    for i in data:
+        if i[0] == int(id):
+            prod = i[1]
+    insert_applic(user, prod, datetime.date.today())
+def application_list():
+    text = ""
+    data = datafr("applications", "applications")
+    for i in data:
+        if i[5] == "False":
+            text += f"\n{i[0]}.{i[1]}, {i[2]}"
+    if text == "":
+        text += "нет заявок"
+        return text
+    else:
+        return text
+def user_appl_list(id):
+    text = ""
+    data = datafr("applications", "applications")
+    for i in data:
+        if i[1] == int(id):
+            text += f"\n{i[0]}. {i[1]}, {i[2]}, {i[5]}"
+    if text == "":
+        text += "нет покупок"
+        return text
+    else:
+        return text
+def user_list():
+    text = ""
+    data = datafr("user", "users")
+    for i in data:
+        text += f"\n{i[0]}. {i[4]} {i[1]}, статус - {i[3]}, счёт - {i[2]}"
+    return text
