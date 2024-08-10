@@ -1,1 +1,0 @@
-# kvanto_bot
