@@ -89,6 +89,18 @@ def select_data(id):
     con.commit()
     con.close()
     return data
+def select_data_num(id):
+    con = sqlite3.connect(f'user.sqlite')
+    cur = con.cursor()
+    data = cur.execute(f'''
+        SELECT *
+        FROM users
+        WHERE id = {id}
+        ''')
+    data = data.fetchall()
+    con.commit()
+    con.close()
+    return data
 def datafr(name, table):
     con = sqlite3.connect(f'{name}.sqlite')
     cur = con.cursor()
@@ -111,6 +123,12 @@ def user_db(id):
     data = datafr("user", "users")
     for i in range(len(data)):
         if data[i][1] == id:
+            return True
+    return False
+def user_num(id):
+    data = datafr("user", "users")
+    for i in range(len(data)):
+        if data[i][0] == id:
             return True
     return False
 def delete_prod(id):

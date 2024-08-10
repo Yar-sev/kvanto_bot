@@ -2,7 +2,7 @@ import telebot
 from telebot import types
 from main_SQL import *
 from func_for_project import *
-bot = telebot.TeleBot("6701177381:AAHOyJu-MZ2j8djqTT5rZlqiGIlJMOt0mA0")
+bot = telebot.TeleBot("7464655942:AAGMdpRrz6d9woeGkIDUdYaoT_1Ky645vpI")
 Numprod = 0
 name = ""
 price = 0
@@ -62,8 +62,9 @@ def message_handler(message):
             btn5 = types.KeyboardButton("список заявок")
             btn4 = types.KeyboardButton("добавить коины")
             btn3 = types.KeyboardButton("обратно")
-            btn6 = types.KeyboardButton("подтвереждение заявки")
-            markup.add(btn1, btn2, btn3, btn4, btn5, btn6)
+            btn7 = types.KeyboardButton("подтвереждение заявки")
+            btn6 = types.KeyboardButton("изменение роли")
+            markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7)
             bot.send_message(message.chat.id, "панель администратора", reply_markup=markup)
         else:
             bot.send_message(message.chat.id, "У вас нет право доступа к панели")
@@ -71,6 +72,12 @@ def message_handler(message):
         if select_data(message.chat.id)[0][3] == "admin":
             text = application_list()
             bot.send_message(message.chat.id, text)
+        else:
+            bot.send_message(message.chat.id, "У вас нет право доступа к панели")
+    elif message.text.lower() == "изменение роли":
+        if select_data(message.chat.id)[0][3] == "admin":
+            bot.send_message(message.chat.id, "напишите номер пользователя")
+            bot.register_next_step_handler(message, change_role)
         else:
             bot.send_message(message.chat.id, "У вас нет право доступа к панели")
     elif message.text.lower() == "изменение магазина":
@@ -159,8 +166,10 @@ def buy1(message):
         bot.register_next_step_handler(message, buy1)
 def add_coin(message):
     if message.text.isdigit():
-        if user_db(int(message.chat.id)):
-            data = select_data(int(message.chat.id))[0]
+        if user_num(int(message.text)):
+            data = select_data_num(int(message.text))[0]
+            global Numprod
+            Numprod = int(message.text)
             bot.send_message(message.chat.id, f"этот пользователь?\n{data[4]}\n\n да/нет")
             bot.register_next_step_handler(message, add_coin1)
         else:
@@ -180,7 +189,8 @@ def add_coin1(message):
         bot.register_next_step_handler(message, add_coin1)
 def add_coin2(message):
     if message.text.isdigit():
-        update_data("user", "users", message.chat.id, "score",select_data(int(message.chat.id))[0][2] + int(message.text), "user_id")
+        global Numprod
+        update_data("user", "users", Numprod, "score",select_data_num(Numprod)[0][2] + int(message.text), "id")
     else:
         bot.send_message(message.chat.id, "неправильный ввод")
         bot.register_next_step_handler(message, add_coin2)
@@ -236,7 +246,6 @@ def del_prod(message):
         bot.send_message(message.chat.id, "неправильный ввод")
 def update_applications0(message):
     if message.text.isdigit():
-        print(1)
         data = datafr("applications", "applications")[int(message.text)-1]
         if data[5] == 'False':
             global Numprod
@@ -245,17 +254,39 @@ def update_applications0(message):
             bot.send_message(message.chat.id, text)
             bot.register_next_step_handler(message, update_applications1)
         else:
-            print(2)
             bot.send_message(message.chat.id, "неправильный ввод")
             bot.register_next_step_handler(message, update_applications0)
     else:
-        print(3)
         bot.send_message(message.chat.id, "неправильный ввод")
         bot.register_next_step_handler(message, update_applications0)
 def update_applications1(message):
     if message.text.lower() == 'да':
-        print(Numprod)
         applic_shut(Numprod+1)
+    elif message.text.lower() == 'нет':
+        bot.register_next_step_handler(message, message_handler)
     else:
+        bot.send_message(message.chat.id, "неправильный ввод")
         bot.register_next_step_handler(message, update_applications0)
+def change_role(message):
+    data = datafr("user", "users")
+    if message.text.isdigit():
+        if int(message.text.lower()) <= len(data):
+            data = select_data_num(int(message.text))[0]
+            global Numprod
+            Numprod = int(message.text)
+            bot.send_message(message.chat.id, f"этот пользователь?\n{data[4]}\n\n да/нет")
+            bot.register_next_step_handler(message, change_step2)
+        else:
+            bot.send_message(message.chat.id, "неправильный ввод")
+    else:
+        bot.send_message(message.chat.id, "неправильный ввод")
+def change_step2(message):
+    if message.text.lower() == 'да':
+        global Numprod
+        change(Numprod)
+    elif message.text.lower() == 'нет':
+        bot.register_next_step_handler(message, message_handler)
+    else:
+        bot.send_message(message.chat.id, "неправильный ввод")
+        bot.register_next_step_handler(message, change_step2)
 bot.infinity_polling()

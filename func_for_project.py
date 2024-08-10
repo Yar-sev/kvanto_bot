@@ -10,6 +10,8 @@ okonchanie = {0 : "ов",
               7 : "ов",
               8 : "ов",
               9 : "ов"}
+applic = {"True" : "выполнено",
+          "False" : "невыполнено"}
 def subnet():
     n = 0
     b = 0
@@ -59,7 +61,7 @@ def application_list():
     data = datafr("applications", "applications")
     for i in data:
         if i[5] == "False":
-            text += f"\n{i[0]}.{i[1]}, {i[2]}"
+            text += f"\n{i[0]}.{i[1]}, {i[2]}, {applic[i[5]]}"
     if text == "":
         text += "нет заявок"
         return text
@@ -70,7 +72,7 @@ def user_appl_list(id):
     data = datafr("applications", "applications")
     for i in data:
         if i[1] == int(id):
-            text += f"\n{i[0]}. {i[1]}, {i[2]}, {i[5]}"
+            text += f"\n{i[0]}. {i[1]}, {i[2]}, {applic[i[5]]}"
     if text == "":
         text += "нет покупок"
         return text
@@ -91,3 +93,9 @@ def correction():
 def applic_shut(id):
     update_data("applications", "applications", id, "done", "True", "id")
     update_data("applications", "applications", id, "date_comple", datetime.date.today(), "id")
+def change(id):
+    data = select_data_num(id)
+    if data[0][3] == "admin":
+        update_data("user", "users", id, "status", "user", "id")
+    elif data[0][3] == "user":
+        update_data("user", "users", id, "status", "admin", "id")
